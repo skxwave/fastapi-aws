@@ -2,6 +2,13 @@ from pydantic_settings import BaseSettings
 from pydantic import BaseModel, Field
 
 
+class JWT(BaseModel):
+    secret_key: str
+    algorithm: str = "HS256"
+    access_token_expire_minutes: float = 60
+    refresh_token_expire_minutes: float = 60
+
+
 class Database(BaseModel):
     host: str
     port: int
@@ -16,4 +23,5 @@ class Database(BaseModel):
 
 class BaseConfig(BaseSettings):
     environment: str = "local"
+    jwt: JWT
     db: Database
