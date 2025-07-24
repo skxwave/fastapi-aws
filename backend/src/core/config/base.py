@@ -15,4 +15,5 @@ class Database(BaseModel):
 
 
 class BaseConfig(BaseSettings):
+    environment: str = "local"
     db: Database
