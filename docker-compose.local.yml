@@ -1,0 +1,45 @@
+services:
+  fastapi:
+    build:
+      context: ./backend
+    container_name: fastapi
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=local
+      - LOCAL__DB__HOST=postgres
+      - LOCAL__DB__PORT=5432
+      - LOCAL__DB__NAME=${LOCAL__DB__NAME}
+      - LOCAL__DB__USER=${LOCAL__DB__USER}
+      - LOCAL__DB__PASSWORD=${LOCAL__DB__PASSWORD}
+    env_file:
+      - .env
+    networks:
+      - fastapi-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${LOCAL__DB__NAME}
+      POSTGRES_USER: ${LOCAL__DB__USER}
+      POSTGRES_PASSWORD: ${LOCAL__DB__PASSWORD}
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - fastapi-network
+
+volumes:
+  postgres_data:
+
+networks:
+  fastapi-network:
+    driver: bridge
