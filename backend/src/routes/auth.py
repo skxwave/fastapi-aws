@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.schemas.user import UserCreate
 from src.schemas.auth import LoginRequest, TokenPair
 from src.db.session import get_async_session
-from src.services.auth import register_user, authenticate_user
+from src.db.repositories import user_repo
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -15,7 +15,7 @@ async def register(
     session: AsyncSession = Depends(get_async_session),
 ):
     try:
-        return await register_user(user_create, session)
+        return await user_repo.register_user(user_create, session)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -29,7 +29,11 @@ async def login(
     session: AsyncSession = Depends(get_async_session),
 ):
     try:
-        return await authenticate_user(data.identifier, data.password, session)
+        return await user_repo.authenticate_user(
+            data.identifier,
+            data.password,
+            session,
+        )
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
