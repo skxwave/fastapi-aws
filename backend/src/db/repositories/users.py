@@ -5,12 +5,9 @@ from sqlalchemy.future import select
 from src.db.models import User, Web3User
 from src.schemas.auth import Nonce, Web3NonceRequest
 from src.schemas.user import UserCreate
-from src.services.auth import (
-    create_nonce,
-    create_token_pair,
-    hash_password,
-    verify_password,
-)
+from src.services.auth import hash_password, verify_password
+from src.services.jwt_service import create_token_pair
+from src.services.web3_auth import create_nonce
 
 
 class UserRepository:

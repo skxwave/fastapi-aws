@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.services.auth import create_nonce, verify_signature
+from src.services.web3_auth import verify_signature
 from src.schemas.user import UserCreate
 from src.schemas.auth import (
     LoginRequest,
