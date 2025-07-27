@@ -10,3 +10,17 @@ class TokenPair(BaseModel):
 class LoginRequest(BaseModel):
     identifier: str
     password: str
+
+
+class Web3NonceRequest(BaseModel):
+    wallet: str
+
+
+class Web3LoginRequest(BaseModel):
+    nonce: str
+    address: str
+    signature: str
+
+
+class Nonce(BaseModel):
+    nonce: str

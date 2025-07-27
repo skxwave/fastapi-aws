@@ -215,3 +215,13 @@ __marimo__/
 .envrc
 .terraformrc
 terraform.rc
+
+# Terraform state
+**/terraform.tfstate
+**/terraform.tfstate.backup
+
+# Terraform plan files
+*.tfplan
+
+# Crash logs
+crash.log

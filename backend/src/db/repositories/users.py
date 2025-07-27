@@ -1,20 +1,16 @@
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from src.db.models import User
-from src.db.session import get_async_session
+from src.db.models import User, Web3User
+from src.schemas.auth import Nonce, Web3NonceRequest
 from src.schemas.user import UserCreate
 from src.services.auth import (
+    create_nonce,
     create_token_pair,
-    decode_access_token,
     hash_password,
     verify_password,
 )
-
-http_bearer = HTTPBearer()
 
 
 class UserRepository:
@@ -60,25 +56,26 @@ class UserRepository:
             raise ValueError("Invalid credentials")
         return create_token_pair(user)
 
-    async def get_current_user(
+    async def get_and_save_nonce(
         self,
-        session: AsyncSession = Depends(get_async_session),
-        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+        data: Web3NonceRequest,
+        session: AsyncSession,
     ):
-        payload = decode_access_token(credentials.credentials)
-        user_id = payload.get("sub")
-        if user_id is None:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Token missing subject",
-            )
-        user = await session.scalar(select(User).where(User.id == user_id))
+        user: Web3User = await session.scalar(
+            select(Web3User).where(Web3User.wallet_address == data.wallet)
+        )
+        nonce = create_nonce()
+
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found",
+            user = Web3User(
+                wallet_address=data.wallet,
+                nonce=nonce,
             )
-        return user
+            session.add(user)
+        else:
+            user.nonce = nonce
+        await session.commit()
+        return Nonce(nonce=nonce)
 
 
 user_repo = UserRepository()
