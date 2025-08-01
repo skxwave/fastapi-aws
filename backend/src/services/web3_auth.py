@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from eth_account import Account
 from eth_account.messages import encode_defunct
 
-from src.services.auth import create_token_pair
+from src.services.jwt_service import create_token_pair
 from src.db.models import Web3User
 
 

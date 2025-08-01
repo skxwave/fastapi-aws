@@ -9,6 +9,10 @@ class JWT(BaseModel):
     refresh_token_expire_minutes: float = 60
 
 
+class Redis(BaseModel):
+    url: str
+
+
 class Database(BaseModel):
     host: str
     port: int
@@ -25,3 +29,4 @@ class BaseConfig(BaseSettings):
     environment: str = "local"
     jwt: JWT
     db: Database
+    redis: Redis

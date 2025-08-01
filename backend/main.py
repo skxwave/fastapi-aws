@@ -1,3 +1,5 @@
+import asyncio
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.requests import Request
@@ -15,6 +17,12 @@ async def redirect_to_docs(request: Request):
     Redirect to docs on the request to the root url of the app
     """
     return RedirectResponse("/docs")
+
+
+@app.get("/load_test")
+async def load_test(request: Request):
+    await asyncio.sleep(2)
+    return {"message": "Done!"}
 
 
 if __name__ == "__main__":

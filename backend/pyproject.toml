@@ -13,6 +13,7 @@ dependencies = [
     "passlib>=1.7.4",
     "pydantic-settings>=2.10.1",
     "pyjwt>=2.10.1",
+    "redis>=6.2.0",
     "sqlalchemy[asyncio]>=2.0.41",
     "web3>=7.12.1",
 ]
