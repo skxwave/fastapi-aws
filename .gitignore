@@ -136,6 +136,8 @@ celerybeat.pid
 
 # Environments
 .env
+.env.dev
+.env.prod
 .envrc
 .venv
 env/
@@ -205,3 +207,21 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Terraform
+**/.terraform/*
+*.auto.tfvars
+*.tfoverride
+.envrc
+.terraformrc
+terraform.rc
+
+# Terraform state
+**/terraform.tfstate
+**/terraform.tfstate.backup
+
+# Terraform plan files
+*.tfplan
+
+# Crash logs
+crash.log

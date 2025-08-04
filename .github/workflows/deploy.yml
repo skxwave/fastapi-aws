@@ -1,0 +1,46 @@
+name: Deploy dev to EC2
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Copy app to EC2 and deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+
+            mkdir -p fastapi_app
+            cd fastapi_app
+
+            if [ ! -d ".git" ]; then
+              git clone -b main https://github.com/skxwave/fastapi-aws.git .
+            else
+              git fetch origin main
+              git reset --hard origin/main
+            fi
+
+            cd backend
+            pipx install uv
+            uv sync --dev
+            source .venv/bin/activate
+            python3 scripts/fetch_env.py
+            alembic upgrade head
+            
+            pkill -f "uvicorn" || true
+            nohup uvicorn main:app --host 0.0.0.0 --port 8000 > app.log 2>&1 &
+            echo "Deployed and running in background!"
+          EOF
