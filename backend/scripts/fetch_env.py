@@ -1,7 +1,7 @@
 import boto3
 import json
 
-secret_name = "fastapi-dev"
+secret_name = "fastapi_dev"
 region_name = "us-east-1"
 
 client = boto3.client("secretsmanager", region_name=region_name)
